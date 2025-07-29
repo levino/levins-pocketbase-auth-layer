@@ -5,7 +5,7 @@
   "scripts": {
     "docusaurus": "docusaurus",
     "start": "docusaurus start",
-    "build": "npx tsx scripts/mdx.ts public/login.md static/public/login.html && cp node_modules/pocketbase/dist/pocketbase.umd.js static/public/pocketbase.umd.js && docusaurus build",
+    "build": "cp node_modules/pocketbase/dist/pocketbase.umd.js static/public/pocketbase.umd.js && docusaurus build",
     "swizzle": "docusaurus swizzle",
     "deploy": "docusaurus deploy",
     "clear": "docusaurus clear",
@@ -28,10 +28,6 @@
     "@docusaurus/module-type-aliases": "3.8.1",
     "@docusaurus/tsconfig": "3.8.1",
     "@docusaurus/types": "3.8.1",
-    "gray-matter": "^4.0.3",
-    "remark-html": "^16.0.1",
-    "remark-parse": "^11.0.0",
-    "tsx": "^4.20.3",
     "typescript": "~5.6.2"
   },
   "browserslist": {

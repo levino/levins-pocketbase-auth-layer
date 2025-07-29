@@ -2,8 +2,8 @@ import express, { type Request, type Response } from 'express'
 import path from 'node:path'
 import PocketBase from 'pocketbase'
 import cookieParser from 'cookie-parser'
-import dotenv from 'dotenv';
-dotenv.config();
+import dotenv from 'dotenv'
+dotenv.config()
 const __dirname = import.meta.dirname
 const app = express()
 
@@ -11,7 +11,6 @@ app.use(cookieParser())
 
 app.use('/public', express.static(path.join(__dirname, '/build/public')))
 
-// Set cookie route
 app.use('/api', express.json())
 app.post('/api/cookie', async (req: Request, res: Response) => {
 	const pb = new PocketBase(process.env.POCKETBASE_URL)
@@ -33,13 +32,17 @@ app.post('/api/cookie', async (req: Request, res: Response) => {
 	}
 })
 
-//authentication and authorization
+app.set('view engine', 'ejs')
+app.set('views', path.join(process.cwd(), 'views'))
+
 app.use(async (req: Request, res: Response, next) => {
 	const pb = new PocketBase(process.env.POCKETBASE_URL)
 	const cookie = req.headers.cookie
 
 	if (!cookie) {
-		return res.sendFile(path.join(__dirname, '/build/public/login.html'))
+		return res.status(401).render('login', {
+			pocketbaseUrl: process.env.POCKETBASE_URL,
+		})
 	}
 
 	pb.authStore.loadFromCookie(cookie)
@@ -52,10 +55,12 @@ app.use(async (req: Request, res: Response, next) => {
 		if (groups[process.env.POCKETBASE_GROUP]) {
 			return next()
 		}
-		return res.sendFile(path.join(__dirname, '/build/public/not_a_member.html'))
+		return res.status(401).render('not_a_member')
 	} catch (error) {
 		console.error(error)
-		return res.sendFile(path.join(__dirname, '/build/public/login.html'))
+		return res.status(401).render('login', {
+			pocketbaseUrl: process.env.POCKETBASE_URL,
+		})
 	}
 })
 
