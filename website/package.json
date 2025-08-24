@@ -5,7 +5,7 @@
   "scripts": {
     "docusaurus": "docusaurus",
     "start": "docusaurus start",
-    "build": "cp node_modules/pocketbase/dist/pocketbase.umd.js static/public/pocketbase.umd.js && docusaurus build",
+    "build": "cp ../node_modules/pocketbase/dist/pocketbase.umd.js static/public/pocketbase.umd.js && docusaurus build",
     "swizzle": "docusaurus swizzle",
     "deploy": "docusaurus deploy",
     "clear": "docusaurus clear",
