@@ -26,10 +26,13 @@
       document.getElementById('sendEmailButton').addEventListener('click', () => {
         const userEmail = <%- JSON.stringify(userEmail) %>;
         const groupName = <%- JSON.stringify(groupName) %>;
+        const pocketbaseUrl = <%- JSON.stringify(pocketbaseUrl) %>;
         const subject = `Aufnahme in die Gruppe "${groupName}"`;
         const body = `Hallo Levin,
 
 hier ist [BITTE NAMEN EINTRAGEN], ich habe mich gerade mit der E-Mail ${userEmail} registriert und möchte gerne in die Gruppe "${groupName}" aufgenommen werden.
+
+PocketBase URL: ${pocketbaseUrl}
 
 Vielen Dank!
 
