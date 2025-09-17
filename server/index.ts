@@ -60,6 +60,7 @@ app.use(async (req: Request, res: Response, next) => {
 		}
 		return res.status(401).render("not_a_member", {
 			userEmail: pb.authStore.record.email,
+			groupName: process.env.POCKETBASE_GROUP,
 		});
 	} catch (error) {
 		return res.status(401).render("login", {
