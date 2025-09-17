@@ -22,6 +22,10 @@
     <button type="button" class="button button--primary" id="loginWithGoogle">
       Login mit Google
     </button>
+
+    <button type="button" class="button button--primary" id="loginWithMicrosoft">
+      Login mit Microsoft
+    </button>
   </div>
 
   <h2>FAQ</h2>
@@ -139,6 +143,29 @@
     document
       .getElementById('loginWithGithub')
       .addEventListener('click', loginWithGithub);
+  });
+</script>
+
+<script>
+  const pbMicrosoft = new PocketBase("<%= pocketbaseUrlMicrosoft %>");
+
+  const loginWithMicrosoft = () =>
+    pbMicrosoft
+      .collection('users')
+      .authWithOAuth2({ provider: 'microsoft' })
+      .then(saveTokenFromAuthStoreAsCookieAndReloadPageMicrosoft);
+
+  const saveTokenFromAuthStoreAsCookieAndReloadPageMicrosoft = () =>
+    fetch('/api/cookie', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ token: pbMicrosoft.authStore.token }),
+    }).then(() => window.location.reload());
+
+  document.addEventListener('DOMContentLoaded', () => {
+    document
+      .getElementById('loginWithMicrosoft')
+      .addEventListener('click', loginWithMicrosoft);
   });
 </script>
 

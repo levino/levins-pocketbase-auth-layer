@@ -1,276 +1,271 @@
-# Protected Documentation Template
+# PocketBase Auth Layer
 
-A modern template for creating **protected documentation websites** that combines the power of [Docusaurus](https://docusaurus.io/) with robust authentication and access control.
+A Docker container that protects static websites with PocketBase authentication using OAuth providers (GitHub, Google, Microsoft).
 
-![Protected Docs Template](https://img.shields.io/badge/docs-protected-green)
-![Docusaurus](https://img.shields.io/badge/Docusaurus-3.8-blue)
-![Node.js](https://img.shields.io/badge/Node.js-18+-green)
-![Docker](https://img.shields.io/badge/Docker-ready-blue)
+## ✨ Features
 
-## 🎯 What is this?
-
-This template provides a complete solution for creating documentation websites that are only accessible to authenticated users. Perfect for:
-
-- **Internal company documentation** that should only be accessible to employees
-- **Member-only content** for organizations, communities, or premium users
-- **Private API documentation** that requires user authentication
-- **Client portals** with restricted access to specific user groups
-- **Educational content** with access control based on enrollment or membership
-
-## 🏗️ How it works
-
-The template consists of two main components that work together:
-
-### 1. Documentation Website (Docusaurus)
-- Built with **Docusaurus 3.8**, a modern static site generator
-- Supports **Markdown** for easy content creation
-- Features **internationalization** (i18n) support
-- Includes **blog functionality** and **versioning**
-- Responsive design with dark/light mode support
-
-### 2. Authentication Server (Node.js + Express)
-- **OAuth authentication** via GitHub, Google, and other providers
-- **PocketBase** integration for user management and access control
-- **Group-based access control** - users must be members of specific groups
-- **Session management** with secure cookies
-- **Multi-language support** (German and English login pages)
-
-### Authentication Flow
-1. User visits the documentation site
-2. Server checks for valid authentication cookie
-3. If not authenticated, user is redirected to login page
-4. User authenticates via OAuth provider (GitHub, Google, etc.)
-5. Server verifies user is member of required group(s)
-6. If authorized, user gains access to the protected documentation
+- **OAuth Authentication**: Login with GitHub, Google, or Microsoft
+- **Group-based Access Control**: Users must be members of a specific group to access content
+- **Static Site Protection**: Serves static files after authentication
+- **Responsive Login UI**: Mobile-friendly login interface with FAQ
+- **Cookie-based Sessions**: Secure session management
+- **Multi-provider Support**: Flexible OAuth provider configuration
 
 ## 🚀 Quick Start
 
-### Prerequisites
-- **Node.js 18+**
-- **Docker** (optional, for containerized deployment)
-- **PocketBase instance** (for user management)
+### Using as Base Image
 
-### 1. Clone and Install
+The recommended approach is to extend this image and add your static website:
+
+```dockerfile
+FROM your-registry/pocketbase-auth-layer:latest
+
+# Copy your static website to the build directory
+COPY ./dist /app/build
+
+# Optional: Override views if needed
+# COPY ./custom-views /app/views
+```
+
+### Multi-stage Build Example
+
+For building and protecting a static site in one Dockerfile:
+
+```dockerfile
+# Build stage
+FROM node:alpine AS builder
+WORKDIR /app
+COPY package*.json ./
+RUN npm install
+COPY . .
+RUN npm run build
+
+# Protection stage
+FROM your-registry/pocketbase-auth-layer:latest
+COPY --from=builder /app/dist /app/build
+```
+
+### Docker Compose
+
+```yaml
+version: '3.8'
+services:
+  protected-site:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - POCKETBASE_URL=https://your-pocketbase.example.com
+      - POCKETBASE_GROUP=members
+      - POCKETBASE_URL_MICROSOFT=https://your-pocketbase-microsoft.example.com
+      - PORT=8000
+```
+
+## 📁 Directory Structure
+
+```
+/app/
+├── build/           # Your static website files go here
+│   ├── index.html
+│   ├── assets/
+│   └── public/      # Public assets (CSS, JS, images)
+├── views/           # EJS templates for auth pages
+│   ├── login.ejs
+│   └── not_a_member.ejs
+├── server files...
+└── package.json
+```
+
+## 🔧 Environment Variables
+
+| Variable | Required | Description | Default |
+|----------|----------|-------------|---------|
+| `POCKETBASE_URL` | ✅ | URL of your PocketBase instance | - |
+| `POCKETBASE_GROUP` | ✅ | Group field name that users must have | - |
+| `POCKETBASE_URL_MICROSOFT` | ❌ | Separate PocketBase URL for Microsoft OAuth | `POCKETBASE_URL` |
+| `PORT` | ❌ | Port the server runs on | `3000` |
+
+### Environment Variable Examples
+
 ```bash
-git clone <your-fork-of-this-repo>
-cd protected-docs-template
-npm install
+# Basic setup
+POCKETBASE_URL=https://pb.example.com
+POCKETBASE_GROUP=premium_members
+
+# With Microsoft OAuth on different instance
+POCKETBASE_URL=https://pb.example.com
+POCKETBASE_URL_MICROSOFT=https://pb-ms.example.com
+POCKETBASE_GROUP=subscribers
+
+# Custom port
+PORT=8080
 ```
 
-### 2. Configure Environment
-Create `.env.local` file in the root directory:
-```env
-POCKETBASE_URL=https://your-pocketbase-instance.com
-POCKETBASE_GROUP=your-group-name
-PORT=8000
+## 🔒 How Authentication Works
+
+1. **Unauthenticated Request**: User visits protected site → Redirected to login page
+2. **OAuth Login**: User clicks provider button → OAuth flow via PocketBase
+3. **Token Exchange**: OAuth token received → Converted to secure cookie
+4. **Group Check**: User authenticated → Check if user belongs to required group
+5. **Access Granted**: Group member → Serve static content
+6. **Access Denied**: Not a group member → Show "not a member" page
+
+## 🏗️ PocketBase Setup
+
+Your PocketBase instance needs:
+
+### Collections
+
+1. **users** collection with OAuth providers configured
+2. **groups** collection with fields:
+   - `user_id` (relation to users)
+   - `[YOUR_GROUP_NAME]` (boolean field matching `POCKETBASE_GROUP`)
+
+### OAuth Configuration
+
+Configure OAuth providers in PocketBase admin:
+- GitHub OAuth App
+- Google OAuth App
+- Microsoft OAuth App (optional)
+
+### Example Group Record
+
+```json
+{
+  "user_id": "user123",
+  "premium_members": true,
+  "subscribers": false
+}
 ```
 
-### 3. Set up PocketBase
-1. Create a PocketBase instance (self-hosted or cloud)
-2. Create a `groups` collection with `user_id` and `your-group-name` fields
-3. Configure OAuth providers (GitHub, Google, etc.)
-4. Add users to the appropriate groups
+## 🎨 Customization
 
-### 4. Customize Your Documentation
-Navigate to the `website/` directory and:
+### Custom Login Page
+
+Replace the login view with your own branding:
+
+```dockerfile
+FROM your-registry/pocketbase-auth-layer:latest
+COPY ./custom-views/login.ejs /app/views/login.ejs
+COPY ./static-site /app/build
+```
+
+### Custom Styling
+
+Add your CSS to the `/app/build/public/` directory:
+
+```dockerfile
+FROM your-registry/pocketbase-auth-layer:latest
+COPY ./dist /app/build
+COPY ./custom.css /app/build/public/custom.css
+```
+
+### Environment-specific Configuration
+
+```dockerfile
+FROM your-registry/pocketbase-auth-layer:latest
+COPY ./dist /app/build
+
+# Development
+# ENV POCKETBASE_URL=http://localhost:8090
+
+# Production
+ENV POCKETBASE_URL=https://prod-pb.example.com
+ENV POCKETBASE_GROUP=verified_users
+```
+
+## 🚢 Deployment
+
+### Build and Run
+
 ```bash
-cd website
-# Edit your documentation files in docs/
-# Customize the site config in docusaurus.config.ts
-# Add your branding, colors, and content
+# Build your protected site
+docker build -t my-protected-site .
+
+# Run with environment variables
+docker run -p 8000:8000 \
+  -e POCKETBASE_URL=https://pb.example.com \
+  -e POCKETBASE_GROUP=members \
+  my-protected-site
 ```
 
-### 5. Build and Run
+### Docker Compose Production
 
-#### Development Mode
-```bash
-# Start the website development server
-cd website
-npm run start
-
-# In another terminal, start the auth server
-cd server
-npm run start
+```yaml
+version: '3.8'
+services:
+  app:
+    build: .
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - POCKETBASE_URL=${POCKETBASE_URL}
+      - POCKETBASE_GROUP=${POCKETBASE_GROUP}
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
 ```
 
-#### Production Mode
-```bash
-# Build the website
-cd website
-npm run build
+## 📝 API Endpoints
 
-# Start the production server
-cd server
-npm run start
-```
-
-#### Docker Deployment
-```bash
-docker compose up --build
-```
-
-The application will be available at `http://localhost:8000`
-
-## 📁 Project Structure
-
-```
-protected-docs-template/
-├── website/                 # Docusaurus documentation site
-│   ├── docs/               # Documentation content (Markdown files)
-│   ├── blog/               # Blog posts
-│   ├── src/                # React components and pages
-│   ├── static/             # Static assets
-│   └── docusaurus.config.ts # Site configuration
-├── server/                 # Authentication server
-│   ├── index.ts            # Main server file
-│   └── views/              # Login page templates
-├── Dockerfile              # Container configuration
-├── docker-compose.yaml     # Multi-container setup
-└── package.json            # Workspace configuration
-```
-
-## 🔧 Configuration
-
-### Authentication Providers
-The system supports multiple OAuth providers via PocketBase:
-- **GitHub** (default)
-- **Google** (default)
-- **Microsoft**
-- **Facebook**
-- **GitLab**
-- **Discord**
-- **Spotify**
-- And many more...
-
-To add new providers, configure them in your PocketBase admin panel.
-
-### Access Control
-Users must be members of a specific group to access the documentation. Configure this in your `.env.local`:
-```env
-POCKETBASE_GROUP=employees  # Only users in "employees" group can access
-```
-
-### Internationalization
-The template includes German language support out of the box. To add more languages:
-
-1. Update `docusaurus.config.ts`:
-```typescript
-i18n: {
-  defaultLocale: 'en',
-  locales: ['en', 'de', 'fr'], // Add your languages
-},
-```
-
-2. Create translation files in `website/i18n/`
-
-### Customization
-- **Branding**: Edit `website/docusaurus.config.ts` and `website/src/css/custom.css`
-- **Content**: Add your documentation to `website/docs/`
-- **Login Pages**: Customize `server/views/login.ejs` and `server/views/not_a_member.ejs`
-
-## 🎨 Use Cases
-
-### Internal Company Documentation
-Perfect for companies that need to share internal documentation, processes, or knowledge bases with employees only.
-
-```env
-POCKETBASE_GROUP=employees
-```
-
-### Client Portals
-Create documentation portals for specific clients or customer segments.
-
-```env
-POCKETBASE_GROUP=premium_clients
-```
-
-### Educational Platforms
-Provide course materials or learning resources to enrolled students or members.
-
-```env
-POCKETBASE_GROUP=course_participants
-```
-
-### API Documentation
-Share private API documentation with authorized developers or partners.
-
-```env
-POCKETBASE_GROUP=api_partners
-```
+- `GET /` - Serves static content (requires authentication)
+- `GET /public/*` - Public assets (CSS, JS, images)
+- `POST /api/cookie` - OAuth token to cookie conversion
+- `GET /*` - Protected static files
 
 ## 🛠️ Development
 
-### Adding New Content
-1. Create Markdown files in `website/docs/`
-2. Update `website/sidebars.ts` if needed
-3. Add blog posts to `website/blog/`
+### Local Development
 
-### Customizing Authentication
-- Modify `server/index.ts` to change authentication logic
-- Update login templates in `server/views/`
-- Configure additional OAuth providers in PocketBase
-
-### Styling and Theming
-- Edit `website/src/css/custom.css` for global styles
-- Modify `website/docusaurus.config.ts` for theme configuration
-- Create custom React components in `website/src/components/`
-
-## 🚀 Deployment
-
-### Docker (Recommended)
 ```bash
-docker compose up --build -d
+# Clone and install
+git clone <repo>
+cd pocketbase-auth-layer/server
+npm install
+
+# Set environment variables
+export POCKETBASE_URL=http://localhost:8090
+export POCKETBASE_GROUP=members
+
+# Run
+npm run dev
 ```
 
-### Manual Deployment
-1. Build the website: `cd website && npm run build`
-2. Deploy the server with built files
-3. Configure environment variables
-4. Set up reverse proxy (nginx, Apache, etc.)
+### Adding Your Static Site
 
-### Cloud Platforms
-The template works well with:
-- **Vercel** (for the documentation site)
-- **Railway** / **Heroku** (for the auth server)
-- **Digital Ocean** / **AWS** / **Google Cloud** (full stack)
+1. Build your static site (React, Vue, vanilla HTML, etc.)
+2. Copy the build output to `/app/build` in the container
+3. Ensure public assets are in `/app/build/public/`
 
-## 🔒 Security Features
+## 🔍 Troubleshooting
 
-- **OAuth-only authentication** - no password storage required
-- **Group-based access control** - fine-grained permissions
-- **Secure session management** - httpOnly cookies with proper settings
-- **CSRF protection** - built into the authentication flow
-- **Regular security updates** - based on maintained dependencies
+### Common Issues
 
-## 📝 License
+**Authentication Loop**: Check that `POCKETBASE_URL` is accessible and OAuth is configured
 
-This template is open source and available under the [MIT License](LICENSE).
+**Group Access Denied**: Verify the user has the correct group field set to `true`
+
+**Assets Not Loading**: Ensure public assets are in `/app/build/public/` directory
+
+**CORS Issues**: Configure PocketBase CORS settings for your domain
+
+### Debug Mode
+
+Add debug logging:
+
+```dockerfile
+FROM your-registry/pocketbase-auth-layer:latest
+ENV NODE_ENV=development
+COPY ./dist /app/build
+```
+
+## 📄 License
+
+[Add your license information here]
 
 ## 🤝 Contributing
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests if applicable
-5. Submit a pull request
-
-## 📞 Support
-
-- **Issues**: Report bugs or request features via GitHub Issues
-- **Discussions**: Join community discussions in GitHub Discussions
-- **Documentation**: Check the [Docusaurus documentation](https://docusaurus.io/docs) for site customization
-
-## 🏷️ Version
-
-Current version: **1.0.0**
-
-Built with:
-- Docusaurus 3.8.1
-- Node.js 18+
-- PocketBase 0.26
-- Express 4.21
-- TypeScript 5.6
-
----
-
-**Made with ❤️ for the developer community**
+[Add contribution guidelines here]

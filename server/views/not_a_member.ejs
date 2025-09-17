@@ -7,10 +7,37 @@
   </head>
   <body>
     <div class="container padding-top--lg">
-      <div class="alert alert--danger">
-        Du bist eingeloggt, aber noch kein Mitglied. Bitte sprich Levin an,
-        damit er Deinen Account freischaltet.
+      <div class="alert alert--warning">
+        <h3>Du bist eingeloggt, aber noch kein Mitglied</h3>
+        <p>Du bist mit der E-Mail-Adresse <strong><%= userEmail %></strong> angemeldet.</p>
+        <p>Bitte kontaktiere Levin, damit er deinen Account freischaltet.</p>
+
+        <div class="padding-top--md">
+          <button type="button" class="button button--primary" id="sendEmailButton">
+            E-Mail an Levin senden
+          </button>
+        </div>
       </div>
     </div>
   </body>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('sendEmailButton').addEventListener('click', () => {
+        const userEmail = <%- JSON.stringify(userEmail) %>;
+        const subject = 'Aufnahme in die Gruppe';
+        const body = `Hallo Levin,
+
+hier ist [BITTE NAMEN EINTRAGEN], ich habe mich gerade mit der E-Mail ${userEmail} registriert und möchte gerne in die Gruppe aufgenommen werden.
+
+Vielen Dank!
+
+[DEIN NAME]`;
+
+        const mailtoLink = `mailto:post@levinkeller.de?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+        window.open(mailtoLink, '_blank');
+      });
+    });
+  </script>
+
 </html>

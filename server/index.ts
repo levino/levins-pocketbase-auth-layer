@@ -42,6 +42,7 @@ app.use(async (req: Request, res: Response, next) => {
 	if (!cookie) {
 		return res.status(401).render('login', {
 			pocketbaseUrl: process.env.POCKETBASE_URL,
+			pocketbaseUrlMicrosoft: process.env.POCKETBASE_URL_MICROSOFT || process.env.POCKETBASE_URL,
 		})
 	}
 
@@ -55,11 +56,14 @@ app.use(async (req: Request, res: Response, next) => {
 		if (groups[process.env.POCKETBASE_GROUP]) {
 			return next()
 		}
-		return res.status(401).render('not_a_member')
+		return res.status(401).render('not_a_member', {
+			userEmail: pb.authStore.record.email
+		})
 	} catch (error) {
 		console.error(error)
 		return res.status(401).render('login', {
 			pocketbaseUrl: process.env.POCKETBASE_URL,
+			pocketbaseUrlMicrosoft: process.env.POCKETBASE_URL_MICROSOFT || process.env.POCKETBASE_URL,
 		})
 	}
 })
