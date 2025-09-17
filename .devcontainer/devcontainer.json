@@ -14,7 +14,8 @@
 				"streetsidesoftware.code-spell-checker-german",
 				"tomoki1207.pdf",
 				"DavidAnson.vscode-markdownlint",
-				"biomejs.biome"
+				"biomejs.biome",
+				"DigitalBrainstem.javascript-ejs-support"
 			],
 			"settings": {
 				"terminal.integrated.defaultProfile.linux": "zsh",
