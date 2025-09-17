@@ -62,7 +62,6 @@ app.use(async (req: Request, res: Response, next) => {
 			userEmail: pb.authStore.record.email,
 		});
 	} catch (error) {
-		console.error(error);
 		return res.status(401).render("login", {
 			pocketbaseUrl: process.env.POCKETBASE_URL,
 			pocketbaseUrlMicrosoft:
