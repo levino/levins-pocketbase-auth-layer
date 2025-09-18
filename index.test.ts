@@ -83,9 +83,9 @@ describe("App functionality", () => {
 		});
 	});
 
-	describe("POST /logout", () => {
+	describe("POST /api/logout", () => {
 		it("should clear auth cookie and redirect to home page", async () => {
-			const response = await request(app).post("/logout").expect(302);
+			const response = await request(app).post("/api/logout").expect(302);
 
 			// Check that cookie is cleared
 			expect(response.headers["set-cookie"]).toBeDefined();
@@ -103,7 +103,7 @@ describe("App functionality", () => {
 
 		it("should work regardless of whether user has existing cookies", async () => {
 			const response = await request(app)
-				.post("/logout")
+				.post("/api/logout")
 				.set("Cookie", "pb_auth=some-existing-token")
 				.expect(302);
 

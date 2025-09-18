@@ -30,7 +30,7 @@ export function createApp() {
 				res.status(500).send("Internal server error");
 			}
 		})
-		.post("/logout", (_req: Request, res: Response) => {
+		.post("/api/logout", (_req: Request, res: Response) => {
 			// Clear the HTTP-only cookie by setting it to expire immediately
 			res.setHeader(
 				"Set-Cookie",
