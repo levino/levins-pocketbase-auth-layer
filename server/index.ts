@@ -1,83 +1,82 @@
 import path from "node:path";
 import cookieParser from "cookie-parser";
-import dotenv from "dotenv";
 import express, { type Request, type Response } from "express";
 import PocketBase from "pocketbase";
 import hbs from "hbs";
 
-dotenv.config();
 const __dirname = import.meta.dirname;
-const app = express();
 
-app.use(cookieParser());
+export function createApp() {
+	return express()
+		.use(cookieParser())
+		.use("/public", express.static(path.join(__dirname, "/build/public")))
+		.use("/api", express.json())
+		.post("/api/cookie", async (req: Request, res: Response) => {
+			const pb = new PocketBase(process.env.POCKETBASE_URL);
+			try {
+				const { token } = req.body;
 
-app.use("/public", express.static(path.join(__dirname, "/build/public")));
+				if (!token) {
+					return res.status(400).send("Auth token is missing");
+				}
 
-app.use("/api", express.json());
-app.post("/api/cookie", async (req: Request, res: Response) => {
-	const pb = new PocketBase(process.env.POCKETBASE_URL);
-	try {
-		const { token } = req.body;
+				pb.authStore.save(token);
 
-		if (!token) {
-			return res.status(400).send("Auth token is missing");
-		}
+				const authCookie = pb.authStore.exportToCookie({ sameSite: "None" });
 
-		pb.authStore.save(token);
+				res.setHeader("Set-Cookie", authCookie);
+				res.status(200).json({});
+			} catch (_error) {
+				res.status(500).send("Internal server error");
+			}
+		})
+		.post("/logout", (req: Request, res: Response) => {
+			// Clear the HTTP-only cookie by setting it to expire immediately
+			res.setHeader(
+				"Set-Cookie",
+				"pb_auth=; Path=/; HttpOnly; SameSite=None; Secure; Expires=Thu, 01 Jan 1970 00:00:00 GMT",
+			);
 
-		const authCookie = pb.authStore.exportToCookie({ sameSite: "None" });
+			// Redirect to home page
+			res.redirect("/");
+		})
+		.set("view engine", "html")
+		.engine("html", hbs.__express)
+		.set("views", path.join(process.cwd(), "views"))
+		.use(async (req: Request, res: Response, next) => {
+			const pb = new PocketBase(process.env.POCKETBASE_URL);
+			const cookie = req.headers.cookie;
 
-		res.setHeader("Set-Cookie", authCookie);
-		res.status(200).json({});
-	} catch (_error) {
-		res.status(500).send("Internal server error");
-	}
-});
+			if (!cookie) {
+				return res.status(401).render("login", {
+					pocketbaseUrl: process.env.POCKETBASE_URL,
+					pocketbaseUrlMicrosoft:
+						process.env.POCKETBASE_URL_MICROSOFT || process.env.POCKETBASE_URL,
+				});
+			}
 
-app.set("view engine", "html");
-app.engine("html", hbs.__express);
-app.set("views", path.join(process.cwd(), "views"));
+			pb.authStore.loadFromCookie(cookie);
 
-app.use(async (req: Request, res: Response, next) => {
-	const pb = new PocketBase(process.env.POCKETBASE_URL);
-	const cookie = req.headers.cookie;
-
-	if (!cookie) {
-		return res.status(401).render("login", {
-			pocketbaseUrl: process.env.POCKETBASE_URL,
-			pocketbaseUrlMicrosoft:
-				process.env.POCKETBASE_URL_MICROSOFT || process.env.POCKETBASE_URL,
-		});
-	}
-
-	pb.authStore.loadFromCookie(cookie);
-
-	try {
-		await pb.collection("users").authRefresh();
-		const groups = await pb
-			.collection("groups")
-			.getFirstListItem(`user_id="${pb.authStore.record.id}"`);
-		if (groups[process.env.POCKETBASE_GROUP]) {
-			return next();
-		}
-		return res.status(401).render("not_a_member", {
-			userEmail: pb.authStore.record.email,
-			groupName: process.env.POCKETBASE_GROUP,
-			pocketbaseUrl: process.env.POCKETBASE_URL,
-		});
-	} catch (error) {
-		return res.status(401).render("login", {
-			pocketbaseUrl: process.env.POCKETBASE_URL,
-			pocketbaseUrlMicrosoft:
-				process.env.POCKETBASE_URL_MICROSOFT || process.env.POCKETBASE_URL,
-		});
-	}
-});
-
-app.use(express.static(path.join(__dirname, "/build")));
-
-// Start the server
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-	console.log(`Server is running on http://localhost:${PORT}`);
-});
+			try {
+				await pb.collection("users").authRefresh();
+				const groups = await pb
+					.collection("groups")
+					.getFirstListItem(`user_id="${pb.authStore.record.id}"`);
+				if (groups[process.env.POCKETBASE_GROUP]) {
+					return next();
+				}
+				return res.status(401).render("not_a_member", {
+					userEmail: pb.authStore.record.email,
+					groupName: process.env.POCKETBASE_GROUP,
+					pocketbaseUrl: process.env.POCKETBASE_URL,
+				});
+			} catch (error) {
+				return res.status(401).render("login", {
+					pocketbaseUrl: process.env.POCKETBASE_URL,
+					pocketbaseUrlMicrosoft:
+						process.env.POCKETBASE_URL_MICROSOFT || process.env.POCKETBASE_URL,
+				});
+			}
+		})
+		.use(express.static(path.join(__dirname, "/build")));
+}
