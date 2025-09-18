@@ -4,9 +4,9 @@ EXPOSE 3000
 
 WORKDIR /app
 
-COPY package.json package-lock.json .
+COPY package.json package-lock.json ./
 
-RUN npm i --only=production
+RUN npm ci --only=production
 
 # Copy application files
 COPY . .
