@@ -1,5 +1,11 @@
 # pocketbase-auth-layer
 
+## 1.0.5
+
+### Patch Changes
+
+- 8c1ff52: fix the Dockerfile and some deps in order to be able to build.
+
 ## 1.0.4
 
 ### Patch Changes
