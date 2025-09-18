@@ -1,5 +1,11 @@
 # pocketbase-auth-layer
 
+## 1.0.9
+
+### Patch Changes
+
+- 0d993f4: fix wrong route for logout
+
 ## 1.0.8
 
 ### Patch Changes
