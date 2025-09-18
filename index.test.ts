@@ -1,5 +1,6 @@
-import { describe, it, expect, beforeEach, vi } from "vitest";
+import type { Express } from "express";
 import request from "supertest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import { createApp } from "./index.js";
 
 // Mock environment variables
@@ -46,7 +47,7 @@ vi.mock("hbs", () => ({
 }));
 
 describe("App functionality", () => {
-	let app: any;
+	let app: Express;
 
 	beforeEach(() => {
 		// Reset mocks

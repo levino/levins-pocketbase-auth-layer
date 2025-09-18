@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, improve ]
   pull_request:
     branches: [ main ]
 
@@ -19,22 +19,12 @@ jobs:
       with:
         node-version: '20'
         cache: 'npm'
-        cache-dependency-path: |
-          package-lock.json
-          server/package-lock.json
 
-    - name: Install root dependencies
+    - name: Install dependencies
       run: npm ci
 
-    - name: Install server dependencies
-      run: |
-        cd server
-        npm ci
-
     - name: Run Biome check
-      run: npx biome check .
+      run: npx biome check
 
     - name: Run tests
-      run: |
-        cd server
-        npm test
+      run: npm test

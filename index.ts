@@ -1,8 +1,8 @@
 import path from "node:path";
 import cookieParser from "cookie-parser";
 import express, { type Request, type Response } from "express";
-import PocketBase from "pocketbase";
 import hbs from "hbs";
+import PocketBase from "pocketbase";
 
 const __dirname = import.meta.dirname;
 
@@ -30,7 +30,7 @@ export function createApp() {
 				res.status(500).send("Internal server error");
 			}
 		})
-		.post("/logout", (req: Request, res: Response) => {
+		.post("/logout", (_req: Request, res: Response) => {
 			// Clear the HTTP-only cookie by setting it to expire immediately
 			res.setHeader(
 				"Set-Cookie",
@@ -70,7 +70,7 @@ export function createApp() {
 					groupName: process.env.POCKETBASE_GROUP,
 					pocketbaseUrl: process.env.POCKETBASE_URL,
 				});
-			} catch (error) {
+			} catch (_error) {
 				return res.status(401).render("login", {
 					pocketbaseUrl: process.env.POCKETBASE_URL,
 					pocketbaseUrlMicrosoft:
