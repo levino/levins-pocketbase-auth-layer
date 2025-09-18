@@ -9,7 +9,7 @@
     <div class="container padding-top--lg">
       <div class="alert alert--warning">
         <h3>Du bist eingeloggt, aber noch kein Mitglied</h3>
-        <p>Du bist mit der E-Mail-Adresse <strong><%= userEmail %></strong> angemeldet.</p>
+        <p>Du bist mit der E-Mail-Adresse <strong>{{userEmail}}</strong> angemeldet.</p>
         <p>Bitte kontaktiere Levin, damit er deinen Account freischaltet.</p>
 
         <div class="padding-top--md">
@@ -24,9 +24,9 @@
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       document.getElementById('sendEmailButton').addEventListener('click', () => {
-        const userEmail = <%- JSON.stringify(userEmail) %>;
-        const groupName = <%- JSON.stringify(groupName) %>;
-        const pocketbaseUrl = <%- JSON.stringify(pocketbaseUrl) %>;
+        const userEmail = "{{userEmail}}";
+        const groupName = "{{groupName}}";
+        const pocketbaseUrl = "{{pocketbaseUrl}}";
         const subject = `Aufnahme in die Gruppe "${groupName}"`;
         const body = `Hallo Levin,
 

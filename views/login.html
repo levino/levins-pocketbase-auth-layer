@@ -5,6 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Einloggen</title>
   <link rel="stylesheet" href="/public/infima.css" />
+  <style>
+    .stack-vertically {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      align-items: flex-start;
+    }
+  </style>
 </head>
 <body>
 
@@ -14,15 +22,13 @@
 
   <p>Bitte logge Dich ein, um die Inhalte zu sehen.</p>
 
-  <div class="padding-bottom--md">
+  <div class="stack-vertically padding-bottom--md">
     <button type="button" class="button button--primary" id="loginWithGithub">
       Login mit GitHub
     </button>
-
     <button type="button" class="button button--primary" id="loginWithGoogle">
       Login mit Google
     </button>
-
     <button type="button" class="button button--primary" id="loginWithMicrosoft">
       Login mit Microsoft
     </button>
@@ -56,8 +62,8 @@
   müsstet ihr Euch ein neues Passwort ausdenken oder erstellen lassen. Dieses<br />
   müsstet ihr entweder aufschreiben oder speichern. Alles sehr umständlich.<br />
   Außerdem würden viele Nutzer:innen ein Passwort verwenden, was sie bereits schon<br />
-  woanders verwendet haben, was sehr<br />
-  <a href="https://www.bsi.bund.de/DE/Themen/Verbraucherinnen-und-Verbraucher/Informationen-und-Empfehlungen/Cyber-Sicherheitsempfehlungen/Accountschutz/Sichere-Passwoerter-erstellen/Umgang-mit-Passwoertern/umgang-mit-passwoertern_node.html#:~:text=Viele%20Anwenderinnen%20und,ebenfalls%20verwendet%20wird." target="_blank" rel="noopener noreferrer">gefährlich</a><br />
+  woanders verwendet haben, was sehr 
+  <a href="https://www.bsi.bund.de/DE/Themen/Verbraucherinnen-und-Verbraucher/Informationen-und-Empfehlungen/Cyber-Sicherheitsempfehlungen/Accountschutz/Sichere-Passwoerter-erstellen/Umgang-mit-Passwoertern/umgang-mit-passwoertern_node.html#:~:text=Viele%20Anwenderinnen%20und,ebenfalls%20verwendet%20wird." target="_blank" rel="noopener noreferrer">gefährlich</a>
   ist.</p>
 
   <h4>Unsicher</h4>
@@ -116,7 +122,7 @@
 <script src="/public/pocketbase.umd.js"></script>
 
 <script>
-  const pb = new PocketBase("<%= pocketbaseUrl %>");
+  const pb = new PocketBase("{{pocketbaseUrl}}");
   const loginWithGithub = () =>
     pb
       .collection('users')
@@ -147,7 +153,7 @@
 </script>
 
 <script>
-  const pbMicrosoft = new PocketBase("<%= pocketbaseUrlMicrosoft %>");
+  const pbMicrosoft = new PocketBase("{{pocketbaseUrlMicrosoft}}");
 
   const loginWithMicrosoft = () =>
     pbMicrosoft
