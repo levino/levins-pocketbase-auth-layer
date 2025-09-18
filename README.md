@@ -72,7 +72,8 @@ services:
 ├── views/           # EJS templates for auth pages
 │   ├── login.ejs
 │   └── not_a_member.ejs
-├── server files...
+├── app.ts           # Application entry point
+├── index.ts         # Express app factory
 └── package.json
 ```
 
@@ -223,7 +224,7 @@ services:
 ```bash
 # Clone and install
 git clone <repo>
-cd pocketbase-auth-layer/server
+cd pocketbase-auth-layer
 npm install
 
 # Set environment variables

@@ -21,9 +21,13 @@ vite.config.js
 build
 dist
 
+# Development views (only need templates, not public assets)
+views/public
+
 # Version control
 .git
 .gitignore
+.biomeignore
 
 # Documentation
 README.md
