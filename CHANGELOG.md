@@ -1,5 +1,15 @@
 # pocketbase-auth-layer
 
+## 1.0.3
+
+### Patch Changes
+
+- 63c6181: Fix release workflow to create version tags without npm publishing
+
+  - Use changeset tag command to create GitHub releases for private packages
+  - Optimize CI workflow with official Biome GitHub Action for faster linting
+  - Separate lint and test jobs for better CI visibility
+
 ## 1.0.2
 
 ### Patch Changes
