@@ -1,5 +1,11 @@
 # pocketbase-auth-layer
 
+## 1.0.7
+
+### Patch Changes
+
+- 0d7abee: Fix import path
+
 ## 1.0.6
 
 ### Patch Changes
