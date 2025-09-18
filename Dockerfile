@@ -4,11 +4,9 @@ EXPOSE 3000
 
 WORKDIR /app
 
-# Copy package files
-COPY package*.json ./
+COPY package.json package-lock.json .
 
-# Install dependencies
-RUN npm ci --only=production
+RUN npm i --only=production
 
 # Copy application files
 COPY . .
