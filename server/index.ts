@@ -3,6 +3,7 @@ import cookieParser from "cookie-parser";
 import dotenv from "dotenv";
 import express, { type Request, type Response } from "express";
 import PocketBase from "pocketbase";
+import hbs from "hbs";
 
 dotenv.config();
 const __dirname = import.meta.dirname;
@@ -33,7 +34,8 @@ app.post("/api/cookie", async (req: Request, res: Response) => {
 	}
 });
 
-app.set("view engine", "ejs");
+app.set("view engine", "html");
+app.engine("html", hbs.__express);
 app.set("views", path.join(process.cwd(), "views"));
 
 app.use(async (req: Request, res: Response, next) => {
