@@ -1,5 +1,11 @@
 # pocketbase-auth-layer
 
+## 1.0.2
+
+### Patch Changes
+
+- 3d3713e: Bumping the version in hopes to trigger a release - version tag
+
 ## 1.0.1
 
 ### Patch Changes
