@@ -1,5 +1,16 @@
 # pocketbase-auth-layer
 
+## 1.0.1
+
+### Patch Changes
+
+- 4e24dd7: Optimize GitHub Actions workflows and Docker publishing
+
+  - Separate Docker publishing from release workflow
+  - Add comprehensive Docker tags (latest, major, major.minor, full version)
+  - Simplify release workflow using direct npx commands
+  - Configure proper trigger conditions for each workflow
+
 ## 1.0.0
 
 ### Major Changes
