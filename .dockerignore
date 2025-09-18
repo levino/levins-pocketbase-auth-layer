@@ -27,7 +27,6 @@ views/public
 # Version control
 .git
 .gitignore
-.biomeignore
 
 # Documentation
 README.md
@@ -44,8 +43,6 @@ README.md
 .DS_Store
 Thumbs.db
 
-# Lock files (use package.json instead)
-package-lock.json
 
 # Temporary files
 *.tmp
