@@ -1,5 +1,5 @@
 {
-	"name": "pocketbase-auth-layer",
+	"name": "levins-pocketbase-auth-layer",
 	"version": "1.0.9",
 	"private": true,
 	"type": "module",
