@@ -1,5 +1,11 @@
 # pocketbase-auth-layer
 
+## 1.0.10
+
+### Patch Changes
+
+- f527671: Fix line breaks in HTML templates for better readability
+
 ## 1.0.9
 
 ### Patch Changes
