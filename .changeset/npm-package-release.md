@@ -2,10 +2,15 @@
 "@levino/pocketbase-auth": minor
 ---
 
-Prepare package for npm publishing alongside Docker release.
+Refactor to pure functions for edge runtime compatibility (Cloudflare Pages/Workers).
 
-- Rename package to `@levino/pocketbase-auth`
-- Export reusable middleware functions: `createCookieHandler`, `createLogoutHandler`, `createAuthMiddleware`
-- Add `createConfiguredApp` for programmatic configuration
-- Add TypeScript interface `PocketBaseAuthOptions`
-- Include views directory in npm package
+- Export pure functions using Web Standard APIs (Request/Response)
+- `handleAuthRequest` - all-in-one handler for auth endpoints
+- `createAuthMiddleware` - middleware that returns Response or null
+- `verifyAuth` - low-level auth verification
+- `handleCookieRequest` - POST /api/cookie handler
+- `handleLogoutRequest` - POST /api/logout handler
+- `generateLoginPageHtml` / `generateNotAMemberPageHtml` - HTML generators
+
+Express/Docker code moved to app.ts (not published to npm).
+Only `pocketbase` is a runtime dependency.
