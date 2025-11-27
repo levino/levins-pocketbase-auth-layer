@@ -24,24 +24,30 @@ export interface AuthResult {
 
 // --- Utility functions ---
 
-function parseCookies(cookieHeader: string | null): Record<string, string> {
-	if (!cookieHeader) return {};
-	return cookieHeader.split(";").reduce(
-		(cookies, cookie) => {
-			const [name, ...rest] = cookie.trim().split("=");
-			if (name) {
-				cookies[name] = decodeURIComponent(rest.join("="));
-			}
-			return cookies;
-		},
-		{} as Record<string, string>,
-	);
+/**
+ * Escape HTML special characters to prevent XSS
+ */
+function escapeHtml(str: string): string {
+	return str
+		.replace(/&/g, "&amp;")
+		.replace(/</g, "&lt;")
+		.replace(/>/g, "&gt;")
+		.replace(/"/g, "&quot;")
+		.replace(/'/g, "&#039;");
 }
 
-function getCookie(request: Request, name: string): string | undefined {
-	const cookieHeader = request.headers.get("Cookie");
-	const cookies = parseCookies(cookieHeader);
-	return cookies[name];
+/**
+ * Escape string for use in JavaScript string literals
+ */
+function escapeJs(str: string): string {
+	return str
+		.replace(/\\/g, "\\\\")
+		.replace(/"/g, '\\"')
+		.replace(/'/g, "\\'")
+		.replace(/\n/g, "\\n")
+		.replace(/\r/g, "\\r")
+		.replace(/</g, "\\x3c")
+		.replace(/>/g, "\\x3e");
 }
 
 function jsonResponse(
@@ -82,7 +88,8 @@ export function generateLoginPageHtml(
 	pocketbaseUrl: string,
 	pocketbaseUrlMicrosoft?: string,
 ): string {
-	const pbUrlMicrosoft = pocketbaseUrlMicrosoft || pocketbaseUrl;
+	const safePbUrl = escapeJs(pocketbaseUrl);
+	const safePbUrlMicrosoft = escapeJs(pocketbaseUrlMicrosoft || pocketbaseUrl);
 	return `<!DOCTYPE html>
 <html lang="de">
 <head>
@@ -111,8 +118,8 @@ export function generateLoginPageHtml(
 </div>
 <script src="https://cdn.jsdelivr.net/npm/pocketbase@0.26.0/dist/pocketbase.umd.min.js"></script>
 <script>
-  const pb = new PocketBase("${pocketbaseUrl}");
-  const pbMicrosoft = new PocketBase("${pbUrlMicrosoft}");
+  const pb = new PocketBase("${safePbUrl}");
+  const pbMicrosoft = new PocketBase("${safePbUrlMicrosoft}");
 
   const saveTokenAndReload = (token) =>
     fetch('/api/cookie', {
@@ -137,6 +144,10 @@ export function generateNotAMemberPageHtml(
 	groupName: string,
 	pocketbaseUrl: string,
 ): string {
+	const safeEmail = escapeHtml(userEmail);
+	const safeEmailJs = escapeJs(userEmail);
+	const safeGroupJs = escapeJs(groupName);
+	const safePbUrlJs = escapeJs(pocketbaseUrl);
 	return `<!DOCTYPE html>
 <html lang="de">
 <head>
@@ -149,7 +160,7 @@ export function generateNotAMemberPageHtml(
   <div class="container padding-top--lg">
     <div class="alert alert--warning">
       <h3>Du bist eingeloggt, aber noch kein Mitglied</h3>
-      <p>Du bist mit der E-Mail-Adresse <strong>${userEmail}</strong> angemeldet.</p>
+      <p>Du bist mit der E-Mail-Adresse <strong>${safeEmail}</strong> angemeldet.</p>
       <p>Bitte kontaktiere Levin, damit er deinen Account freischaltet.</p>
       <div class="padding-top--md">
         <button type="button" class="button button--primary" id="sendEmailButton">E-Mail an Levin senden</button>
@@ -164,8 +175,8 @@ export function generateNotAMemberPageHtml(
   </div>
   <script>
     document.getElementById('sendEmailButton').addEventListener('click', () => {
-      const subject = 'Aufnahme in die Gruppe "${groupName}"';
-      const body = 'Hallo Levin,\\n\\nhier ist [BITTE NAMEN EINTRAGEN], ich habe mich gerade mit der E-Mail ${userEmail} registriert und möchte gerne in die Gruppe "${groupName}" aufgenommen werden.\\n\\nPocketBase URL: ${pocketbaseUrl}\\n\\nVielen Dank!\\n\\n[DEIN NAME]';
+      const subject = 'Aufnahme in die Gruppe "${safeGroupJs}"';
+      const body = 'Hallo Levin,\\n\\nhier ist [BITTE NAMEN EINTRAGEN], ich habe mich gerade mit der E-Mail ${safeEmailJs} registriert und möchte gerne in die Gruppe "${safeGroupJs}" aufgenommen werden.\\n\\nPocketBase URL: ${safePbUrlJs}\\n\\nVielen Dank!\\n\\n[DEIN NAME]';
       window.open('mailto:post@levinkeller.de?subject=' + encodeURIComponent(subject) + '&body=' + encodeURIComponent(body), '_blank');
     });
   </script>
@@ -308,7 +319,11 @@ export function createAuthMiddleware(options: PocketBaseAuthOptions) {
 
 		if (!result.isAuthorized && result.user) {
 			return htmlResponse(
-				generateNotAMemberPageHtml(result.user.email, groupField, pocketbaseUrl),
+				generateNotAMemberPageHtml(
+					result.user.email,
+					groupField,
+					pocketbaseUrl,
+				),
 				403,
 			);
 		}

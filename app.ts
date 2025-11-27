@@ -1,13 +1,17 @@
 import path from "node:path";
 import cookieParser from "cookie-parser";
-import express, { type Request, type Response, type NextFunction } from "express";
+import express, {
+	type NextFunction,
+	type Request,
+	type Response,
+} from "express";
 import {
-	handleCookieRequest,
-	handleLogoutRequest,
-	verifyAuth,
 	generateLoginPageHtml,
 	generateNotAMemberPageHtml,
+	handleCookieRequest,
+	handleLogoutRequest,
 	type PocketBaseAuthOptions,
+	verifyAuth,
 } from "./index.ts";
 
 const __dirname = import.meta.dirname;
@@ -32,14 +36,20 @@ function toWebRequest(req: Request): globalThis.Request {
 	return new globalThis.Request(url, {
 		method: req.method,
 		headers,
-		body: req.method !== "GET" && req.method !== "HEAD" ? JSON.stringify(req.body) : undefined,
+		body:
+			req.method !== "GET" && req.method !== "HEAD"
+				? JSON.stringify(req.body)
+				: undefined,
 	});
 }
 
 /**
  * Bridge function to send Web Response via Express res
  */
-async function sendWebResponse(webResponse: globalThis.Response, res: Response): Promise<void> {
+async function sendWebResponse(
+	webResponse: globalThis.Response,
+	res: Response,
+): Promise<void> {
 	res.status(webResponse.status);
 
 	webResponse.headers.forEach((value, key) => {
@@ -54,10 +64,20 @@ async function sendWebResponse(webResponse: globalThis.Response, res: Response):
  * Creates the Express app for Docker deployment
  */
 export function createApp() {
+	const pocketbaseUrl = process.env.POCKETBASE_URL;
+	const groupField = process.env.POCKETBASE_GROUP;
+
+	if (!pocketbaseUrl) {
+		throw new Error("POCKETBASE_URL environment variable is required");
+	}
+	if (!groupField) {
+		throw new Error("POCKETBASE_GROUP environment variable is required");
+	}
+
 	const options: PocketBaseAuthOptions = {
-		pocketbaseUrl: process.env.POCKETBASE_URL!,
+		pocketbaseUrl,
 		pocketbaseUrlMicrosoft: process.env.POCKETBASE_URL_MICROSOFT,
-		groupField: process.env.POCKETBASE_GROUP!,
+		groupField,
 	};
 
 	return express()
@@ -65,7 +85,10 @@ export function createApp() {
 		.use("/api", express.json())
 		.post("/api/cookie", async (req: Request, res: Response) => {
 			const webRequest = toWebRequest(req);
-			const webResponse = await handleCookieRequest(webRequest, options.pocketbaseUrl);
+			const webResponse = await handleCookieRequest(
+				webRequest,
+				options.pocketbaseUrl,
+			);
 			await sendWebResponse(webResponse, res);
 		})
 		.post("/api/logout", async (_req: Request, res: Response) => {
@@ -79,7 +102,12 @@ export function createApp() {
 			if (!result.isAuthenticated) {
 				return res
 					.status(401)
-					.send(generateLoginPageHtml(options.pocketbaseUrl, options.pocketbaseUrlMicrosoft));
+					.send(
+						generateLoginPageHtml(
+							options.pocketbaseUrl,
+							options.pocketbaseUrlMicrosoft,
+						),
+					);
 			}
 
 			if (!result.isAuthorized && result.user) {
@@ -99,9 +127,12 @@ export function createApp() {
 		.use(express.static(path.join(__dirname, "/build")));
 }
 
-const app = createApp();
-const PORT = process.env.PORT || 3000;
+// Only start server when run directly, not when imported
+if (import.meta.url === `file://${process.argv[1]}`) {
+	const app = createApp();
+	const PORT = process.env.PORT || 3000;
 
-app.listen(PORT, () => {
-	console.log(`Server is running on http://localhost:${PORT}`);
-});
+	app.listen(PORT, () => {
+		console.log(`Server is running on http://localhost:${PORT}`);
+	});
+}
