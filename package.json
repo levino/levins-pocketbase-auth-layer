@@ -1,61 +1,70 @@
 {
-	"name": "@levino/pocketbase-auth",
-	"version": "1.0.11",
-	"description": "PocketBase authentication middleware for edge runtimes (Cloudflare Pages/Workers) and Node.js",
-	"type": "module",
-	"main": "./index.ts",
-	"exports": {
-		".": "./index.ts"
-	},
-	"files": [
-		"index.ts"
-	],
-	"scripts": {
-		"start": "node --experimental-strip-types app.ts",
-		"dev": "npm run copy-assets && vite",
-		"build": "npm run build-assets",
-		"copy-assets": "mkdir -p views/public/public && cp node_modules/infima/dist/css/default/default.css views/public/public/infima.css && cp node_modules/pocketbase/dist/pocketbase.umd.js views/public/public/pocketbase.umd.js",
-		"build-assets": "mkdir -p build/public && cp node_modules/infima/dist/css/default/default.css build/public/infima.css",
-		"test": "vitest"
-	},
-	"keywords": [
-		"pocketbase",
-		"auth",
-		"middleware",
-		"cloudflare",
-		"workers",
-		"pages",
-		"edge",
-		"authentication",
-		"oauth"
-	],
-	"author": "Levin Keller",
-	"license": "MIT",
-	"repository": {
-		"type": "git",
-		"url": "https://github.com/levino/levins-pocketbase-auth-layer.git"
-	},
-	"bugs": {
-		"url": "https://github.com/levino/levins-pocketbase-auth-layer/issues"
-	},
-	"homepage": "https://github.com/levino/levins-pocketbase-auth-layer#readme",
-	"dependencies": {
-		"pocketbase": "^0.26"
-	},
-	"devDependencies": {
-		"@biomejs/biome": "^2.2.4",
-		"@changesets/cli": "^2.29.7",
-		"@types/cookie-parser": "^1.4.8",
-		"@types/supertest": "^6.0.3",
-		"cookie-parser": "^1.4.7",
-		"dotenv": "^17.2.1",
-		"ejs": "^3.1.10",
-		"express": "^4.21.2",
-		"hbs": "^4.2.0",
-		"infima": "^0.2.0-alpha.45",
-		"supertest": "^7.1.4",
-		"vite": "^7.1.6",
-		"vite-plugin-handlebars": "^2.0.0",
-		"vitest": "^3.2.4"
-	}
+  "name": "@levino/pocketbase-auth",
+  "version": "1.0.11",
+  "description": "PocketBase authentication middleware for edge runtimes (Cloudflare Pages/Workers) and Node.js",
+  "type": "module",
+  "main": "./index.ts",
+  "exports": {
+    ".": "./index.ts"
+  },
+  "files": [
+    "index.ts"
+  ],
+  "scripts": {
+    "start": "node --experimental-strip-types app.ts",
+    "dev": "npm run copy-assets && vite",
+    "build": "npm run build-assets",
+    "copy-assets": "mkdir -p views/public/public && cp node_modules/infima/dist/css/default/default.css views/public/public/infima.css && cp node_modules/pocketbase/dist/pocketbase.umd.js views/public/public/pocketbase.umd.js",
+    "build-assets": "mkdir -p build/public && cp node_modules/infima/dist/css/default/default.css build/public/infima.css",
+    "test": "vitest",
+    "postinstall": "allow-scripts"
+  },
+  "keywords": [
+    "pocketbase",
+    "auth",
+    "middleware",
+    "cloudflare",
+    "workers",
+    "pages",
+    "edge",
+    "authentication",
+    "oauth"
+  ],
+  "author": "Levin Keller",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/levino/levins-pocketbase-auth-layer.git"
+  },
+  "bugs": {
+    "url": "https://github.com/levino/levins-pocketbase-auth-layer/issues"
+  },
+  "homepage": "https://github.com/levino/levins-pocketbase-auth-layer#readme",
+  "dependencies": {
+    "pocketbase": "^0.26"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.2.4",
+    "@changesets/cli": "^2.29.7",
+    "@lavamoat/allow-scripts": "^3.4.1",
+    "@types/cookie-parser": "^1.4.8",
+    "@types/supertest": "^6.0.3",
+    "cookie-parser": "^1.4.7",
+    "dotenv": "^17.2.1",
+    "ejs": "^3.1.10",
+    "express": "^4.21.2",
+    "hbs": "^4.2.0",
+    "infima": "^0.2.0-alpha.45",
+    "supertest": "^7.1.4",
+    "vite": "^7.1.6",
+    "vite-plugin-handlebars": "^2.0.0",
+    "vitest": "^3.2.4"
+  },
+  "lavamoat": {
+    "allowScripts": {
+      "$root$": false,
+      "vite-plugin-handlebars>vite>esbuild": true,
+      "vite>esbuild": true
+    }
+  }
 }
