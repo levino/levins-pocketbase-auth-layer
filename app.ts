@@ -1,7 +1,6 @@
 import path from "node:path";
 import cookieParser from "cookie-parser";
 import express, { type Request, type Response, type NextFunction } from "express";
-import hbs from "hbs";
 import {
 	handleCookieRequest,
 	handleLogoutRequest,
@@ -63,7 +62,6 @@ export function createApp() {
 
 	return express()
 		.use(cookieParser())
-		.use("/public", express.static(path.join(__dirname, "/build/public")))
 		.use("/api", express.json())
 		.post("/api/cookie", async (req: Request, res: Response) => {
 			const webRequest = toWebRequest(req);
@@ -74,9 +72,6 @@ export function createApp() {
 			const webResponse = handleLogoutRequest("/");
 			await sendWebResponse(webResponse, res);
 		})
-		.set("view engine", "html")
-		.engine("html", hbs.__express)
-		.set("views", path.join(process.cwd(), "views"))
 		.use(async (req: Request, res: Response, next: NextFunction) => {
 			const webRequest = toWebRequest(req);
 			const result = await verifyAuth(webRequest, options);
