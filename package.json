@@ -1,10 +1,15 @@
 {
-	"name": "levins-pocketbase-auth-layer",
+	"name": "@levino/pocketbase-auth",
 	"version": "1.0.11",
-	"private": true,
+	"description": "PocketBase authentication middleware for Express.js applications",
 	"type": "module",
-	"workspaces": [
-		"packages/*"
+	"main": "./index.ts",
+	"exports": {
+		".": "./index.ts"
+	},
+	"files": [
+		"index.ts",
+		"views"
 	],
 	"scripts": {
 		"start": "node --experimental-strip-types app.ts",
@@ -14,6 +19,24 @@
 		"build-assets": "mkdir -p build/public && cp node_modules/infima/dist/css/default/default.css build/public/infima.css",
 		"test": "vitest"
 	},
+	"keywords": [
+		"pocketbase",
+		"auth",
+		"middleware",
+		"express",
+		"authentication",
+		"oauth"
+	],
+	"author": "Levin Keller",
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/levino/levins-pocketbase-auth-layer.git"
+	},
+	"bugs": {
+		"url": "https://github.com/levino/levins-pocketbase-auth-layer/issues"
+	},
+	"homepage": "https://github.com/levino/levins-pocketbase-auth-layer#readme",
 	"dependencies": {
 		"cookie-parser": "^1.4.7",
 		"dotenv": "^17.2.1",
