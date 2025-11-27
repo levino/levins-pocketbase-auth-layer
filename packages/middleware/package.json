@@ -1,0 +1,53 @@
+{
+  "name": "@levino/pocketbase-auth-middleware",
+  "version": "0.0.1",
+  "description": "PocketBase authentication middleware for Cloudflare Pages/Workers and other edge runtimes",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "prepublishOnly": "npm run build",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [
+    "pocketbase",
+    "auth",
+    "middleware",
+    "cloudflare",
+    "workers",
+    "pages",
+    "edge",
+    "authentication",
+    "oauth"
+  ],
+  "author": "Levin Keller",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/levino/levins-pocketbase-auth-layer.git",
+    "directory": "packages/middleware"
+  },
+  "bugs": {
+    "url": "https://github.com/levino/levins-pocketbase-auth-layer/issues"
+  },
+  "homepage": "https://github.com/levino/levins-pocketbase-auth-layer/tree/main/packages/middleware#readme",
+  "peerDependencies": {
+    "pocketbase": ">=0.21.0"
+  },
+  "devDependencies": {
+    "pocketbase": "^0.26.0",
+    "typescript": "^5.8.3"
+  }
+}

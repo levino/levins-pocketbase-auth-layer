@@ -3,6 +3,9 @@
 	"version": "1.0.11",
 	"private": true,
 	"type": "module",
+	"workspaces": [
+		"packages/*"
+	],
 	"scripts": {
 		"start": "node --experimental-strip-types app.ts",
 		"dev": "npm run copy-assets && vite",
