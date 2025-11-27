@@ -12,8 +12,8 @@
   ],
   "scripts": {
     "start": "node --experimental-strip-types app.ts",
-    "test": "vitest",
-    "postinstall": "allow-scripts"
+    "setup": "npm install && npx allow-scripts run",
+    "test": "vitest"
   },
   "keywords": [
     "pocketbase",
@@ -43,6 +43,7 @@
     "@biomejs/biome": "^2.2.4",
     "@changesets/cli": "^2.29.7",
     "@lavamoat/allow-scripts": "^3.4.1",
+    "@lavamoat/preinstall-always-fail": "^2.1.1",
     "@types/cookie-parser": "^1.4.8",
     "@types/express": "^5.0.2",
     "@types/supertest": "^6.0.3",
@@ -53,8 +54,8 @@
   },
   "lavamoat": {
     "allowScripts": {
-      "$root$": false,
-      "vitest>vite>esbuild": true
+      "@lavamoat/preinstall-always-fail": false,
+      "vitest>vite>esbuild": false
     }
   }
 }
