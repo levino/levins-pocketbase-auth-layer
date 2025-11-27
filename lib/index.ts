@@ -27,7 +27,8 @@ export interface AuthResult {
 /**
  * Escape HTML special characters to prevent XSS
  */
-function escapeHtml(str: string): string {
+function escapeHtml(str: string | undefined | null): string {
+	if (str == null) return "";
 	return str
 		.replace(/&/g, "&amp;")
 		.replace(/</g, "&lt;")
@@ -39,7 +40,8 @@ function escapeHtml(str: string): string {
 /**
  * Escape string for use in JavaScript string literals
  */
-function escapeJs(str: string): string {
+function escapeJs(str: string | undefined | null): string {
+	if (str == null) return "";
 	return str
 		.replace(/\\/g, "\\\\")
 		.replace(/"/g, '\\"')
@@ -341,6 +343,20 @@ export async function handleAuthRequest(
 	request: Request,
 	options: PocketBaseAuthOptions,
 ): Promise<Response | null> {
+	// Validate required options
+	if (!options.pocketbaseUrl) {
+		return htmlResponse(
+			"<h1>Configuration Error</h1><p>POCKETBASE_URL environment variable is not set.</p>",
+			500,
+		);
+	}
+	if (!options.groupField) {
+		return htmlResponse(
+			"<h1>Configuration Error</h1><p>POCKETBASE_GROUP environment variable is not set.</p>",
+			500,
+		);
+	}
+
 	const url = new URL(request.url);
 
 	if (url.pathname === "/api/cookie" && request.method === "POST") {
