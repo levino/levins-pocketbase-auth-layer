@@ -3,6 +3,6 @@
 	"private": true,
 	"type": "module",
 	"dependencies": {
-		"@levino/pocketbase-auth": "^1.0.11"
+		"@levino/pocketbase-auth": "file:.."
 	}
 }
