@@ -37,6 +37,8 @@
 	},
 	"homepage": "https://github.com/levino/levins-pocketbase-auth-layer#readme",
 	"dependencies": {
+		"cookie-parser": "^1.4.7",
+		"express": "^4.21.2",
 		"pocketbase": "^0.26"
 	},
 	"devDependencies": {
@@ -47,8 +49,6 @@
 		"@types/cookie-parser": "^1.4.8",
 		"@types/express": "^5.0.2",
 		"@types/supertest": "^6.0.3",
-		"cookie-parser": "^1.4.7",
-		"express": "^4.21.2",
 		"supertest": "^7.1.4",
 		"typescript": "^5.9.3",
 		"vitest": "^3.2.4"
