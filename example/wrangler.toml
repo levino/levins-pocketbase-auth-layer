@@ -1,0 +1,8 @@
+name = "pocketbase-auth-example"
+compatibility_date = "2024-01-01"
+
+# Local development environment variables
+# For production, set these in the Cloudflare dashboard
+[vars]
+# POCKETBASE_URL = "https://your-pocketbase-instance.com"
+# POCKETBASE_GROUP = "yourGroupField"
