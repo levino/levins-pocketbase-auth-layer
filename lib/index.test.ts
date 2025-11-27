@@ -1,7 +1,7 @@
 import type { Express } from "express";
 import request from "supertest";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { createApp } from "./index.js";
+import { createApp } from "./app.js";
 
 // Mock environment variables
 vi.mock("dotenv", () => ({

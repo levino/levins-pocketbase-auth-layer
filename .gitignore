@@ -3,13 +3,7 @@ node_modules/
 
 # Production
 build/
-
-# Generated files
-.docusaurus
-.cache-loader
-
-# Dev server assets (copied from node_modules)
-/views/public/
+dist/
 
 # Misc
 .DS_Store
