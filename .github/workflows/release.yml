@@ -42,7 +42,6 @@ jobs:
           publish: npx changeset publish
         env:
           GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           NPM_CONFIG_PROVENANCE: true
 
   release-candidate:
@@ -67,5 +66,4 @@ jobs:
       - name: Publish RC to npm
         run: npx changeset publish --tag rc --no-git-tag
         env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
           NPM_CONFIG_PROVENANCE: true
