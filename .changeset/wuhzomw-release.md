@@ -2,4 +2,4 @@
 "@levino/pocketbase-auth": patch
 ---
 
-Update repository URLs in package.json
+Restore FAQ section to login page explaining OAuth-only authentication
