@@ -30,12 +30,12 @@
 	"license": "MIT",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/levino/levins-pocketbase-auth-layer.git"
+		"url": "https://github.com/levino/pocketbase-auth.git"
 	},
 	"bugs": {
-		"url": "https://github.com/levino/levins-pocketbase-auth-layer/issues"
+		"url": "https://github.com/levino/pocketbase-auth/issues"
 	},
-	"homepage": "https://github.com/levino/levins-pocketbase-auth-layer#readme",
+	"homepage": "https://github.com/levino/pocketbase-auth#readme",
 	"dependencies": {
 		"cookie-parser": "^1.4.7",
 		"express": "^4.21.2",
