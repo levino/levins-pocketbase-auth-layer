@@ -1,5 +1,11 @@
 # pocketbase-auth-layer
 
+## 1.1.1
+
+### Patch Changes
+
+- 48552cc: Restore FAQ section to login page explaining OAuth-only authentication
+
 ## 1.1.0
 
 ### Minor Changes
