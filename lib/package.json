@@ -1,6 +1,6 @@
 {
 	"name": "@levino/pocketbase-auth",
-	"version": "1.1.0",
+	"version": "1.1.1",
 	"description": "PocketBase authentication middleware for edge runtimes (Cloudflare Pages/Workers) and Node.js",
 	"type": "module",
 	"main": "./dist/index.js",
